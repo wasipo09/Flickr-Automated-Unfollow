@@ -31,46 +31,50 @@ function addEvent(){
   });
 
 function unfollow(){
-  console.log('unfollow')
 
   var $notFollowing = $('.not-following').find('.contact-list-edit a');
-  if ( $notFollowing.length <= 2){
-    console.log('all following');
+
+  if ( $notFollowing.length <= 0 ){
+    //console.log('all following');
     window.location = 'https://'+ document.location.host + $('a.Next').attr('href');
   } else {
+
     $notFollowing.each(function(i){
       var $this = $(this);
       setTimeout(function(){
 
         $this.click();
-        console.log('click' , i);
+        //console.log('click' , i);
 
       }, (i * 2000) );
-    }); 
+
+      console.log( i, $notFollowing.length -1 );
+      if ( i == ($notFollowing.length -1) ){
+        setTimeout(function(){
+          window.location.reload();
+        }, i *2000 + 3000);
+      }
+
+    });
+
   }
-  
+
 }
 
 setTimeout(unfollow, 1000);
 
-setTimeout(function(){
-  window.location.reload();
-  //window.location = 'https://'+ document.location.host + $('a.Next').attr('href');
-}, 15000);
-
    (function() {
       snapIcons = document.evaluate("//td[@class='contact-list-bicon']/a/img[@class='BuddyIconX']",
         document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-      
+
       if (snapIcons.snapshotLength == 0) {
         snapIcons = document.evaluate("//td[@class='contact-list-bicon contact-list-sorted']/a/img[@class='BuddyIconX']",
           document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
       }
-        
+
       if (snapIcons.snapshotLength == 0) {
         return;
       }
-        
       for (var i = snapIcons.snapshotLength - 1; i >= 0; i--) {
         var thisIcon = snapIcons.snapshotItem(i);
         var matchNSID = /([a-zA-Z0-9]+@[A-Z0-9]+)/;
@@ -89,16 +93,22 @@ setTimeout(function(){
                   ) {
                     snapUnames = document.evaluate("//td[@class='contact-list-name']/a/text()",
                       document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
-                    
                     if (snapUnames.snapshotLength == 0) {
                       snapUnames = document.evaluate("//td[@class='contact-list-name contact-list-sorted']/a/text()",
                         document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
                     }
-                    
                     for (j = 0; j < snapUnames.snapshotLength; j++) {
                       if (snapUnames.snapshotItem(j).nodeValue == rsp.person.username._content) {
-                        snapUnames.snapshotItem(j).parentNode.style.color = 'red';
-                        $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+
+                        var lastUpload = $(snapUnames.snapshotItem(j)).parents('tr').find('.contact-list-last').text();
+
+                        if ( lastUpload.contains('day') || lastUpload.contains('hours') || lastUpload.contains('minutes')){
+                            snapUnames.snapshotItem(j).parentNode.style.color = 'red';
+                            $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                        } else {
+                            snapUnames.snapshotItem(j).parentNode.style.color = 'orange';
+                            $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                        }
                       }
                     }
                   }
