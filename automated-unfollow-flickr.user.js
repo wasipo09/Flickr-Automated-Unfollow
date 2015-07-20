@@ -102,12 +102,12 @@ setTimeout(unfollow, 1000);
 
                         var lastUpload = $(snapUnames.snapshotItem(j)).parents('tr').find('.contact-list-last').text();
 
-                        if ( lastUpload.contains('day') || lastUpload.contains('hours') || lastUpload.contains('minutes')){
+                        if ( lastUpload.contains('months') || lastUpload.contains('years') || lastUpload.contains('ages') ){
                             snapUnames.snapshotItem(j).parentNode.style.color = 'red';
                             $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
                         } else {
                             snapUnames.snapshotItem(j).parentNode.style.color = 'orange';
-                            $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                            //$(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
                         }
                       }
                     }
