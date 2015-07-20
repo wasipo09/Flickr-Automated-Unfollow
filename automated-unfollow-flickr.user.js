@@ -102,7 +102,7 @@ setTimeout(unfollow, 1000);
 
                         var lastUpload = $(snapUnames.snapshotItem(j)).parents('tr').find('.contact-list-last').text();
 
-                        if ( lastUpload.contains('months') || lastUpload.contains('years') || lastUpload.contains('ages') ){
+                        if ( lastUpload.contains('months') || lastUpload.contains('year') || lastUpload.contains('ages') ){
                             snapUnames.snapshotItem(j).parentNode.style.color = 'red';
                             $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
                         } else {
