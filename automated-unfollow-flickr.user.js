@@ -1,13 +1,23 @@
 // ==UserScript==
-// @name        Automated Unfollow Flickr
+// @name        Automated Unfollow Flickr 2.0
 // @namespace   stvedt_unfollow_automated
 // @include     https://www.flickr.com/people/*/contacts/*
-// @version     1
+// @version     2.0
 // @grant       none
-// ==/UserScript==
+// ==UserScript==
 // allow pasting
 
+//unfollow can be all or non-follower
+
+var config = {
+  "unfollow": "non-reciprocal", // 'all' or 'non-reciprocal'
+  "protect": ['friend','family'], // 'friend' or 'family'
+  "upload": ['minute','hour','day'] // 'minute', 'hour','day','week', 'month', 'ages'
+};
+
 function run(){
+
+  //This injects jquery
   s = document.createElement('script');
   s.type = 'text/javascript';
   s.id = 'jqueryInject';
@@ -93,22 +103,47 @@ setTimeout(unfollow, 1000);
                   ) {
                     snapUnames = document.evaluate("//td[@class='contact-list-name']/a/text()",
                       document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
+
                     if (snapUnames.snapshotLength == 0) {
                       snapUnames = document.evaluate("//td[@class='contact-list-name contact-list-sorted']/a/text()",
                         document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
                     }
                     for (j = 0; j < snapUnames.snapshotLength; j++) {
-                      if (snapUnames.snapshotItem(j).nodeValue == rsp.person.username._content) {
+                      if(config.unfollow ==='all'){
 
+                      } else {
+
+                      }
+                      if (snapUnames.snapshotItem(j).nodeValue == rsp.person.username._content || config.unfollow =='all') {
+
+                        var contactType = $(snapUnames.snapshotItem(j)).parents('tr').find('.contact-list-youthem span').eq(0).text();
+                        contactType=contactType.toLowerCase();
                         var lastUpload = $(snapUnames.snapshotItem(j)).parents('tr').find('.contact-list-last').text();
 
-                        if ( lastUpload.contains('day') || lastUpload.contains('hours') || lastUpload.contains('minutes')){
-                            snapUnames.snapshotItem(j).parentNode.style.color = 'red';
-                            $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
-                        } else {
-                            snapUnames.snapshotItem(j).parentNode.style.color = 'orange';
-                            $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
-                        }
+                        //console.log(lastUpload);
+
+                        var protect = false;
+                        for(i=0; i<config.protect.length; i++){
+                          if ( contactType.contains(config.protect[i]) ){
+                            protect = true;
+                            break;
+                          }
+                        }//end loop to check contact type
+
+                        if (!protect){
+                          for(i=0; i<config.upload.length; i++){
+                            if ( lastUpload.contains(config.upload[i]) ){
+                              // mark to unfollow and red if active recently
+                              snapUnames.snapshotItem(j).parentNode.style.color = 'red';
+                              $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                              break;
+                            } else {
+                              // mark to unfollow and orange if not active
+                              snapUnames.snapshotItem(j).parentNode.style.color = 'orange';
+                              //$(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                            }
+                          }
+                        }//end if !protect
                       }
                     }
                   }
