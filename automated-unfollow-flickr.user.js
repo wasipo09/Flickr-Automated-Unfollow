@@ -12,7 +12,8 @@
 var config = {
   "unfollow": "non-reciprocal", // 'all' or 'non-reciprocal'
   "protect": ['friend','family'], // 'friend' or 'family'
-  "upload": ['minute','hour','day'] // 'minute', 'hour','day','week', 'month', 'ages'
+  "upload": ['minute','hour','day','week'], // 'minute', 'hour','day','week', 'month', 'ages'
+  "anyUploadTime": false // true, false
 };
 
 function run(){
@@ -86,6 +87,7 @@ setTimeout(unfollow, 1000);
         return;
       }
       for (var i = snapIcons.snapshotLength - 1; i >= 0; i--) {
+        console.log(i);
         var thisIcon = snapIcons.snapshotItem(i);
         var matchNSID = /([a-zA-Z0-9]+@[A-Z0-9]+)/;
         var matches = matchNSID.exec(thisIcon.src);
@@ -131,6 +133,11 @@ setTimeout(unfollow, 1000);
                         }//end loop to check contact type
 
                         if (!protect){
+                          if (config.anyUploadTime == true ){
+                            snapUnames.snapshotItem(j).parentNode.style.color = 'red';
+                            $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                            break;
+                          }
                           for(i=0; i<config.upload.length; i++){
                             if ( lastUpload.contains(config.upload[i]) ){
                               // mark to unfollow and red if active recently
@@ -138,8 +145,9 @@ setTimeout(unfollow, 1000);
                               $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
                               break;
                             } else {
-                              // mark to unfollow and orange if not active
+                              //orange if not active
                               snapUnames.snapshotItem(j).parentNode.style.color = 'orange';
+                              // mark to unfollow below Uncomment to unfollow 
                               //$(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
                             }
                           }
@@ -152,6 +160,7 @@ setTimeout(unfollow, 1000);
             }
           };
           var f = function() {
+            console.log('f');
             try {
               unsafeWindow.F.API.callMethod(
                 'flickr.people.getInfo',
