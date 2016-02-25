@@ -10,7 +10,7 @@
 //unfollow can be all or non-follower
 
 var config = {
-  "unfollow": "non-reciprocal", // 'all' or 'non-reciprocal'
+  "unfollow": 'non-reciprocal', // 'all' or 'non-reciprocal'
   "protect": ['friend','family'], // 'friend' or 'family'
   "upload": ['minute','hour','day','week'], // 'minute', 'hour','day','week', 'month', 'ages'
   "anyUploadTime": false // true, false
@@ -111,12 +111,8 @@ setTimeout(unfollow, 1000);
                         document, null, XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE, null);
                     }
                     for (j = 0; j < snapUnames.snapshotLength; j++) {
-                      if(config.unfollow ==='all'){
 
-                      } else {
-
-                      }
-                      if (snapUnames.snapshotItem(j).nodeValue == rsp.person.username._content || config.unfollow =='all') {
+                      if ( snapUnames.snapshotItem(j).nodeValue == rsp.person.username._content || config.unfollow =='all' ) {
 
                         var contactType = $(snapUnames.snapshotItem(j)).parents('tr').find('.contact-list-youthem span').eq(0).text();
                         contactType=contactType.toLowerCase();
@@ -133,24 +129,29 @@ setTimeout(unfollow, 1000);
                         }//end loop to check contact type
 
                         if (!protect){
-                          if (config.anyUploadTime == true ){
+
+                          console.log('not protected');
+                          if (config.anyUploadTime === true ){
+
+                            console.log('anyUpload is true');
                             snapUnames.snapshotItem(j).parentNode.style.color = 'red';
                             $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
-                            break;
-                          }
-                          for(i=0; i<config.upload.length; i++){
-                            if ( lastUpload.contains(config.upload[i]) ){
-                              // mark to unfollow and red if active recently
-                              snapUnames.snapshotItem(j).parentNode.style.color = 'red';
-                              $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
-                              break;
-                            } else {
-                              //orange if not active
-                              snapUnames.snapshotItem(j).parentNode.style.color = 'orange';
-                              // mark to unfollow below Uncomment to unfollow 
-                              //$(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
-                            }
-                          }
+                          } else {
+
+                            for(i=0; i<config.upload.length; i++){
+                              if ( lastUpload.contains(config.upload[i]) ){
+                                // mark to unfollow and red if active recently
+                                snapUnames.snapshotItem(j).parentNode.style.color = 'red';
+                                $(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                                break;
+                              } else {
+                                //orange if not active
+                                snapUnames.snapshotItem(j).parentNode.style.color = 'orange';
+                                // mark to unfollow below Uncomment to unfollow 
+                                //$(snapUnames.snapshotItem(j)).parents('tr').addClass('not-following');
+                              }
+                            }//end for loop check upload
+                          }//end protect else
                         }//end if !protect
                       }
                     }
